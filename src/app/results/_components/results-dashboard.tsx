@@ -1,6 +1,8 @@
+
 "use client";
 
 import { useEffect, useState, use } from "react";
+import { useSearchParams } from 'next/navigation';
 import type { Strategy, StrategyApiResponse } from "@/types";
 import { getDynamicRecommendation } from "../actions";
 
@@ -15,8 +17,9 @@ import { NextSteps } from "./next-steps";
 import ResultsLoading from "../loading";
 
 // The `searchParams` prop is passed from the page component
-export default function ResultsDashboard({ searchParams }: { searchParams: { strategy: Strategy }}) {
-  const strategy = searchParams.strategy;
+export default function ResultsDashboard() {
+  const searchParams = useSearchParams();
+  const strategy = searchParams.get('strategy') as Strategy;
 
   const [data, setData] = useState<StrategyApiResponse | null>(null);
   const [dynamicRec, setDynamicRec] = useState<string | null>(null);
