@@ -39,7 +39,7 @@ const itemVariants = {
 };
 
 export function StrategyCard({ strategy, isSelected, onSelect, isHovered, onSubmit, isAnyCardSelected }: StrategyCardProps) {
-  const showDetails = isHovered || isSelected || isAnyCardSelected;
+  const showDetails = isHovered || isSelected || (isAnyCardSelected && isSelected);
 
   return (
     <motion.div
@@ -48,10 +48,8 @@ export function StrategyCard({ strategy, isSelected, onSelect, isHovered, onSubm
       transition={{ duration: 0.3, ease: "easeInOut" }}
       onClick={() => onSelect(strategy.id)}
       className={cn(
-        "cursor-pointer group text-right rounded-2xl overflow-hidden border-4 transition-colors duration-300 h-full flex",
-        isSelected
-          ? `border-accent`
-          : "border-transparent",
+        "cursor-pointer group text-right rounded-2xl overflow-hidden border-4 transition-colors duration-300 h-full flex flex-col",
+        isSelected ? `border-accent` : "border-transparent",
         "bg-white dark:bg-gray-800"
       )}
     >
@@ -75,7 +73,7 @@ export function StrategyCard({ strategy, isSelected, onSelect, isHovered, onSubm
 
         <CardContent className="p-6 pt-0 flex flex-col flex-grow">
           <motion.p 
-            className="text-gray-600 dark:text-gray-300 mb-6 text-base leading-relaxed flex-grow"
+            className="text-gray-600 dark:text-gray-300 mb-6 text-base leading-relaxed"
             style={{minHeight: '140px'}}
             >
               {strategy.story}
@@ -89,28 +87,24 @@ export function StrategyCard({ strategy, isSelected, onSelect, isHovered, onSubm
                 animate={showDetails ? "visible" : "hidden"}
                 exit="hidden"
             >
-            {showDetails && (
-                <>
-                    <motion.div variants={itemVariants}>
-                        <h4 className="font-bold text-lg text-gray-700 dark:text-gray-200 mb-4">ترکیب فاکتورها</h4>
-                        <div className="space-y-4 text-right">
-                            {strategy.factors.map((factor) => (
-                            <div key={factor.name} className="w-full">
-                                <div className="flex justify-between mb-1 text-sm font-semibold text-gray-600 dark:text-gray-300">
-                                <span>{factor.name}</span>
-                                <span>{factor.value}%</span>
-                                </div>
-                                <Progress
-                                value={factor.value}
-                                className="h-2.5 bg-gray-200 dark:bg-gray-700"
-                                indicatorClassName="bg-[var(--strategy-color)]"
-                                />
-                            </div>
-                            ))}
-                        </div>
-                    </motion.div>
-                </>
-            )}
+              <motion.div variants={itemVariants}>
+                  <h4 className="font-bold text-lg text-gray-700 dark:text-gray-200 mb-4">ترکیب فاکتورها</h4>
+                  <div className="space-y-4 text-right">
+                      {strategy.factors.map((factor) => (
+                      <div key={factor.name} className="w-full">
+                          <div className="flex justify-between mb-1 text-sm font-semibold text-gray-600 dark:text-gray-300">
+                          <span>{factor.name}</span>
+                          <span>{factor.value}%</span>
+                          </div>
+                          <Progress
+                          value={factor.value}
+                          className="h-2.5 bg-gray-200 dark:bg-gray-700"
+                          indicatorClassName="bg-[var(--strategy-color)]"
+                          />
+                      </div>
+                      ))}
+                  </div>
+              </motion.div>
             </motion.div>
           </AnimatePresence>
             <motion.div
@@ -119,7 +113,7 @@ export function StrategyCard({ strategy, isSelected, onSelect, isHovered, onSubm
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{duration: 0.2}}
-              className="mt-8"
+              className="mt-auto pt-8"
             >
               {isSelected ? (
                 <Button

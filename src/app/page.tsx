@@ -1,12 +1,12 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { StrategyCard } from "@/components/strategy-card";
-import { StrategyInfo } from "@/types";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import type { StrategyInfo } from "@/types";
 
 export default function HomePage() {
   const router = useRouter();
@@ -89,7 +89,7 @@ export default function HomePage() {
   };
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation(); // prevent card's onClick from firing
+    e.stopPropagation(); 
     if (selectedStrategy) {
       router.push(`/results?strategy=${selectedStrategy}`);
     }
@@ -114,29 +114,39 @@ export default function HomePage() {
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-6xl items-start">
-        {strategies.map((strategy, index) => (
-          <div
-            key={strategy.id}
-            ref={el => cardRefs.current[index] = el}
-            onMouseEnter={() => handleMouseEnter(strategy.id, index)}
-            onMouseLeave={() => setHoveredStrategy(null)}
-            className={cn(
-              "transition-all duration-300 h-full",
-              (hoveredStrategy && hoveredStrategy !== strategy.id) || (isAnyCardSelected && selectedStrategy !== strategy.id)
-                ? "blur-sm scale-95 opacity-70"
-                : ""
-            )}
-          >
-            <StrategyCard
-              strategy={strategy}
-              isSelected={selectedStrategy === strategy.id}
-              onSelect={handleSelectStrategy}
-              isHovered={hoveredStrategy === strategy.id}
-              onSubmit={handleSubmit}
-              isAnyCardSelected={isAnyCardSelected}
-            />
-          </div>
-        ))}
+        {strategies.map((strategy, index) => {
+          const isSelected = selectedStrategy === strategy.id;
+          const isHovered = hoveredStrategy === strategy.id;
+          
+          let isBlurred = false;
+          if (isAnyCardSelected) {
+            isBlurred = !isSelected && !isHovered;
+          } else if (hoveredStrategy) {
+            isBlurred = !isHovered;
+          }
+
+          return (
+            <div
+              key={strategy.id}
+              ref={el => cardRefs.current[index] = el}
+              onMouseEnter={() => handleMouseEnter(strategy.id, index)}
+              onMouseLeave={() => setHoveredStrategy(null)}
+              className={cn(
+                "transition-all duration-300 h-full",
+                isBlurred ? "blur-sm scale-95 opacity-70" : ""
+              )}
+            >
+              <StrategyCard
+                strategy={strategy}
+                isSelected={isSelected}
+                onSelect={handleSelectStrategy}
+                isHovered={isHovered}
+                onSubmit={handleSubmit}
+                isAnyCardSelected={isAnyCardSelected}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
