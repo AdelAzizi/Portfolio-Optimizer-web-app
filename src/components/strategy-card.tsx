@@ -54,18 +54,22 @@ export function StrategyCard({ strategy, isSelected, onSelect, isHovered }: Stra
         className="w-full h-full flex flex-col justify-between border-none bg-transparent"
         style={{ '--strategy-color': strategy.color } as React.CSSProperties}
       >
-        <CardHeader className="items-end p-6">
-          <div className="text-6xl mb-4">{strategy.icon}</div>
-          <CardTitle className="font-extrabold text-3xl text-gray-800 dark:text-white">
-            {strategy.name}
-          </CardTitle>
-          <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">
-            {strategy.tagline}
-          </p>
+        <CardHeader className="p-6">
+            <div className="flex items-start gap-4">
+                 <div className="text-6xl">{strategy.icon}</div>
+                 <div className="flex-1">
+                    <CardTitle className="font-extrabold text-3xl text-gray-800 dark:text-white">
+                        {strategy.name}
+                    </CardTitle>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">
+                        {strategy.tagline}
+                    </p>
+                 </div>
+            </div>
         </CardHeader>
 
         <CardContent className="p-6 pt-0">
-          <motion.p className="text-gray-600 dark:text-gray-300 mb-6 text-base leading-relaxed min-h-[12rem]">
+          <motion.p className="text-gray-600 dark:text-gray-300 mb-6 text-base leading-relaxed min-h-[9rem]">
               {strategy.story}
           </motion.p>
           <AnimatePresence>
