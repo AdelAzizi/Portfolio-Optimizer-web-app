@@ -63,7 +63,16 @@ export default function HomePage() {
   ];
 
   const handleSelectStrategy = (id: string) => {
-    setSelectedStrategy(id === selectedStrategy ? null : id);
+    setSelectedStrategy((prev) => {
+      const newId = id === prev ? null : id;
+      if (newId) {
+        setTimeout(() => {
+          const cardElement = cardRefs.current[strategies.findIndex(s => s.id === newId)];
+          cardElement?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 300);
+      }
+      return newId;
+    });
   };
 
   const handleMouseEnter = (id: string, index: number) => {
