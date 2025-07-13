@@ -7,10 +7,12 @@ import { StrategyCard } from "@/components/strategy-card";
 import { Button } from "@/components/ui/button";
 import { StrategyInfo } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export default function HomePage() {
   const router = useRouter();
   const [selectedStrategy, setSelectedStrategy] = useState<string | null>(null);
+  const [hoveredStrategy, setHoveredStrategy] = useState<string | null>(null);
 
   const strategies: StrategyInfo[] = [
     {
@@ -88,12 +90,22 @@ export default function HomePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
         {strategies.map((strategy) => (
-          <StrategyCard
+          <div
             key={strategy.id}
-            strategy={strategy}
-            isSelected={selectedStrategy === strategy.id}
-            onSelect={handleSelectStrategy}
-          />
+            onMouseEnter={() => setHoveredStrategy(strategy.id)}
+            onMouseLeave={() => setHoveredStrategy(null)}
+            className={cn(
+              "transition-all duration-300",
+              hoveredStrategy && hoveredStrategy !== strategy.id ? "blur-sm scale-95" : ""
+            )}
+          >
+            <StrategyCard
+              strategy={strategy}
+              isSelected={selectedStrategy === strategy.id}
+              onSelect={handleSelectStrategy}
+              isHovered={hoveredStrategy === strategy.id}
+            />
+          </div>
         ))}
       </div>
       

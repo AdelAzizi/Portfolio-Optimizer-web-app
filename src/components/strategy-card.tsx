@@ -6,12 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { StrategyInfo } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
 
 interface StrategyCardProps {
   strategy: StrategyInfo;
   isSelected: boolean;
   onSelect: (id: string) => void;
+  isHovered: boolean;
 }
 
 const cardVariants = {
@@ -35,16 +35,11 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-export function StrategyCard({ strategy, isSelected, onSelect }: StrategyCardProps) {
-    const [isHovered, setIsHovered] = useState(false);
+export function StrategyCard({ strategy, isSelected, onSelect, isHovered }: StrategyCardProps) {
   return (
     <motion.div
       variants={cardVariants}
-      initial="initial"
-      animate="initial"
-      whileHover="hover"
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
+      animate={isHovered ? "hover" : "initial"}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       onClick={() => onSelect(strategy.id)}
       className={cn(
@@ -70,7 +65,7 @@ export function StrategyCard({ strategy, isSelected, onSelect }: StrategyCardPro
         </CardHeader>
 
         <CardContent className="p-6 pt-0">
-          <motion.p className="text-gray-600 dark:text-gray-300 mb-6 text-base leading-relaxed h-48">
+          <motion.p className="text-gray-600 dark:text-gray-300 mb-6 text-base leading-relaxed min-h-[12rem]">
               {strategy.story}
           </motion.p>
           <AnimatePresence>
