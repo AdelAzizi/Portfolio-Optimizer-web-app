@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { StrategyCard } from "@/components/strategy-card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ export default function HomePage() {
   const [selectedStrategy, setSelectedStrategy] = useState<string | null>(null);
   const [hoveredStrategy, setHoveredStrategy] = useState<string | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const buttonRef = useRef<HTMLDivElement | null>(null);
 
   const strategies: StrategyInfo[] = [
     {
@@ -67,6 +68,14 @@ export default function HomePage() {
     setSelectedStrategy(id);
   };
 
+  useEffect(() => {
+    if (selectedStrategy && buttonRef.current) {
+      setTimeout(() => {
+        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300); // Wait for button animation
+    }
+  }, [selectedStrategy]);
+
   const handleMouseEnter = (id: string, index: number) => {
     setHoveredStrategy(id);
     const cardElement = cardRefs.current[index];
@@ -94,7 +103,7 @@ export default function HomePage() {
         transition={{ duration: 0.5 }}
         className="mb-12"
       >
-        <h1 className="text-4xl sm:text-5xl font-headline font-bold text-primary mb-4">
+        <h1 className="text-4xl sm:text-5xl font-headline font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent mb-4">
           سبد سرمایه‌گذاری هوشمند خود را بسازید
         </h1>
         <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -127,6 +136,7 @@ export default function HomePage() {
       <AnimatePresence>
         {selectedStrategy && (
           <motion.div
+            ref={buttonRef}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
