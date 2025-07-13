@@ -74,11 +74,11 @@ export default function HomePage() {
       return newId;
     });
   };
-
+  
   const handleMouseEnter = (id: string, index: number) => {
     setHoveredStrategy(id);
     const cardElement = cardRefs.current[index];
-    if (cardElement) {
+    if (cardElement && !selectedStrategy) {
         setTimeout(() => {
             const rect = cardElement.getBoundingClientRect();
             if (rect.bottom > window.innerHeight - 20) {
@@ -94,6 +94,8 @@ export default function HomePage() {
       router.push(`/results?strategy=${selectedStrategy}`);
     }
   };
+
+  const isAnyCardSelected = selectedStrategy !== null;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 sm:p-8 text-center">
@@ -111,7 +113,7 @@ export default function HomePage() {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-6xl">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-6xl items-start">
         {strategies.map((strategy, index) => (
           <div
             key={strategy.id}
@@ -119,8 +121,10 @@ export default function HomePage() {
             onMouseEnter={() => handleMouseEnter(strategy.id, index)}
             onMouseLeave={() => setHoveredStrategy(null)}
             className={cn(
-              "transition-all duration-300",
-              hoveredStrategy && hoveredStrategy !== strategy.id ? "blur-sm scale-95 opacity-70" : ""
+              "transition-all duration-300 h-full",
+              (hoveredStrategy && hoveredStrategy !== strategy.id) || (isAnyCardSelected && selectedStrategy !== strategy.id)
+                ? "blur-sm scale-95 opacity-70"
+                : ""
             )}
           >
             <StrategyCard
@@ -129,6 +133,7 @@ export default function HomePage() {
               onSelect={handleSelectStrategy}
               isHovered={hoveredStrategy === strategy.id}
               onSubmit={handleSubmit}
+              isAnyCardSelected={isAnyCardSelected}
             />
           </div>
         ))}

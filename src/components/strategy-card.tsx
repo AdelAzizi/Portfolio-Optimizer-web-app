@@ -14,6 +14,7 @@ interface StrategyCardProps {
   onSelect: (id: string) => void;
   isHovered: boolean;
   onSubmit: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  isAnyCardSelected: boolean;
 }
 
 const cardVariants = {
@@ -37,8 +38,8 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-export function StrategyCard({ strategy, isSelected, onSelect, isHovered, onSubmit }: StrategyCardProps) {
-  const showDetails = isHovered || isSelected;
+export function StrategyCard({ strategy, isSelected, onSelect, isHovered, onSubmit, isAnyCardSelected }: StrategyCardProps) {
+  const showDetails = isHovered || isSelected || isAnyCardSelected;
 
   return (
     <motion.div
@@ -75,6 +76,7 @@ export function StrategyCard({ strategy, isSelected, onSelect, isHovered, onSubm
         <CardContent className="p-6 pt-0 flex flex-col flex-grow">
           <motion.p 
             className="text-gray-600 dark:text-gray-300 mb-6 text-base leading-relaxed flex-grow"
+            style={{minHeight: '140px'}}
             >
               {strategy.story}
           </motion.p>
