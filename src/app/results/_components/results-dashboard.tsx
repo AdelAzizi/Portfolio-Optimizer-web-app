@@ -35,21 +35,22 @@ export default function ResultsDashboard() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch("/api/optimize-strategy", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch("http://127.0.0.1:8000/optimize-strategy", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({ strategy_name: strategy }),
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.detail || "خطا در دریافت اطلاعات از سرور");
+          throw new Error(errorData.detail || "Server returned an error");
         }
 
         const result: StrategyApiResponse = await response.json();
         setData(result);
 
-        // Fetch dynamic recommendation after getting the main data
         const recommendation = await getDynamicRecommendation(result);
         setDynamicRec(recommendation);
 

@@ -1,66 +1,115 @@
+
 "use client";
 
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import type { Strategy } from "@/types";
-
-export interface StrategyInfo {
-  id: Strategy;
-  icon: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  factors: { name: string; value: number }[];
-  color: string;
-}
+import { StrategyInfo } from "@/types";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 
 interface StrategyCardProps {
   strategy: StrategyInfo;
   isSelected: boolean;
-  onSelect: () => void;
+  onSelect: (id: string) => void;
 }
 
+const cardVariants = {
+  initial: {
+    scale: 1,
+    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+  },
+  hover: {
+    scale: 1.05,
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+  },
+};
+
+const contentVariants = {
+  hidden: { opacity: 0, height: 0, y: 20 },
+  visible: { opacity: 1, height: "auto", y: 0, transition: { staggerChildren: 0.1 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 },
+};
+
 export function StrategyCard({ strategy, isSelected, onSelect }: StrategyCardProps) {
+    const [isHovered, setIsHovered] = useState(false);
   return (
-    <Card
-      onClick={onSelect}
+    <motion.div
+      variants={cardVariants}
+      initial="initial"
+      animate="initial"
+      whileHover="hover"
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      onClick={() => onSelect(strategy.id)}
       className={cn(
-        "cursor-pointer group text-right transition-all duration-300 ease-in-out border-2 hover:shadow-2xl hover:-translate-y-2",
+        "cursor-pointer group text-right rounded-2xl overflow-hidden border-4",
         isSelected
-          ? "border-accent shadow-2xl -translate-y-2"
-          : "border-transparent"
+          ? `border-blue-500`
+          : "border-transparent",
+        "bg-white dark:bg-gray-800"
       )}
-      style={{
-        '--strategy-color': strategy.color,
-      } as React.CSSProperties}
     >
-      <CardHeader className="items-end">
-        <div className="text-6xl mb-3">{strategy.icon}</div>
-        <CardTitle className="font-headline text-3xl font-bold text-primary">
-          {strategy.title}
-        </CardTitle>
-        <p className="text-muted-foreground font-medium">{strategy.subtitle}</p>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-6 h-20">{strategy.description}</p>
-        <div className="space-y-4 text-right opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <h4 className="font-bold text-sm text-foreground">فاکتورهای کلیدی</h4>
-          {strategy.factors.map((factor) => (
-            <div key={factor.name} className="w-full">
-              <div className="flex justify-between mb-1 text-xs font-semibold">
-                <span>{factor.name}</span>
-                <span>{factor.value}%</span>
-              </div>
-              <Progress
-                value={factor.value}
-                className="h-2"
-                indicatorClassName="bg-[var(--strategy-color)]"
-              />
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+      <Card
+        className="w-full h-full flex flex-col justify-between border-none bg-transparent"
+        style={{ '--strategy-color': strategy.color } as React.CSSProperties}
+      >
+        <CardHeader className="items-end p-6">
+          <div className="text-6xl mb-4">{strategy.icon}</div>
+          <CardTitle className="font-extrabold text-3xl text-gray-800 dark:text-white">
+            {strategy.name}
+          </CardTitle>
+          <p className="text-gray-500 dark:text-gray-400 font-medium mt-1">
+            {strategy.tagline}
+          </p>
+        </CardHeader>
+
+        <CardContent className="p-6 pt-0">
+          <motion.p className="text-gray-600 dark:text-gray-300 mb-6 text-base leading-relaxed h-48">
+              {strategy.story}
+          </motion.p>
+          <AnimatePresence>
+            {isHovered && (
+                <motion.div
+                    key="factors"
+                    className="overflow-hidden"
+                    variants={contentVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                >
+                    <motion.div variants={itemVariants}>
+                    <h4 className="font-bold text-lg text-gray-700 dark:text-gray-200 mb-4">ترکیب فاکتورها</h4>
+                    <div className="space-y-4 text-right">
+                        {strategy.factors.map((factor) => (
+                        <div key={factor.name} className="w-full">
+                            <div className="flex justify-between mb-1 text-sm font-semibold text-gray-600 dark:text-gray-300">
+                            <span>{factor.name}</span>
+                            <span>{factor.value}%</span>
+                            </div>
+                            <Progress
+                            value={factor.value}
+                            className="h-2.5 bg-gray-200 dark:bg-gray-700"
+                            indicatorClassName="bg-[var(--strategy-color)]"
+                            />
+                        </div>
+                        ))}
+                    </div>
+                    </motion.div>
+    
+                    <motion.p variants={itemVariants} className="mt-8 text-sm font-semibold text-center text-white p-3 rounded-lg" style={{backgroundColor: strategy.color}}>
+                    {strategy.final_cta}
+                    </motion.p>
+                </motion.div>
+            )}
+          </AnimatePresence>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
