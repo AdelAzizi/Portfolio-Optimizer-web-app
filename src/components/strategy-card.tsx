@@ -4,6 +4,7 @@
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { StrategyInfo } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -12,6 +13,7 @@ interface StrategyCardProps {
   isSelected: boolean;
   onSelect: (id: string) => void;
   isHovered: boolean;
+  onSubmit: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const cardVariants = {
@@ -26,8 +28,8 @@ const cardVariants = {
 };
 
 const contentVariants = {
-  hidden: { opacity: 0, height: 0, y: 20 },
-  visible: { opacity: 1, height: "auto", y: 0, transition: { staggerChildren: 0.1 } },
+  hidden: { opacity: 0, height: 0, y: -20 },
+  visible: { opacity: 1, height: "auto", y: 0, transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
 };
 
 const itemVariants = {
@@ -35,7 +37,9 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-export function StrategyCard({ strategy, isSelected, onSelect, isHovered }: StrategyCardProps) {
+export function StrategyCard({ strategy, isSelected, onSelect, isHovered, onSubmit }: StrategyCardProps) {
+  const showDetails = isHovered || isSelected;
+
   return (
     <motion.div
       variants={cardVariants}
@@ -43,9 +47,9 @@ export function StrategyCard({ strategy, isSelected, onSelect, isHovered }: Stra
       transition={{ duration: 0.3, ease: "easeInOut" }}
       onClick={() => onSelect(strategy.id)}
       className={cn(
-        "cursor-pointer group text-right rounded-2xl overflow-hidden border-4",
+        "cursor-pointer group text-right rounded-2xl overflow-hidden border-4 transition-colors duration-300",
         isSelected
-          ? `border-blue-500`
+          ? `border-accent`
           : "border-transparent",
         "bg-white dark:bg-gray-800"
       )}
@@ -68,44 +72,68 @@ export function StrategyCard({ strategy, isSelected, onSelect, isHovered }: Stra
             </div>
         </CardHeader>
 
-        <CardContent className="p-6 pt-0">
-          <motion.p className="text-gray-600 dark:text-gray-300 mb-6 text-base leading-relaxed min-h-[9rem]">
+        <CardContent className="p-6 pt-0 flex flex-col flex-grow">
+          <motion.p 
+            className="text-gray-600 dark:text-gray-300 mb-6 text-base leading-relaxed flex-grow"
+            animate={{minHeight: showDetails ? '9rem' : '4rem'}}
+            >
               {strategy.story}
           </motion.p>
-          <AnimatePresence>
-            {isHovered && (
-                <motion.div
-                    key="factors"
-                    className="overflow-hidden"
-                    variants={contentVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                >
+          <AnimatePresence mode="wait">
+            <motion.div
+                key={showDetails ? "details" : "placeholder"}
+                className="overflow-hidden"
+                variants={contentVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+            >
+            {showDetails && (
+                <>
                     <motion.div variants={itemVariants}>
-                    <h4 className="font-bold text-lg text-gray-700 dark:text-gray-200 mb-4">ترکیب فاکتورها</h4>
-                    <div className="space-y-4 text-right">
-                        {strategy.factors.map((factor) => (
-                        <div key={factor.name} className="w-full">
-                            <div className="flex justify-between mb-1 text-sm font-semibold text-gray-600 dark:text-gray-300">
-                            <span>{factor.name}</span>
-                            <span>{factor.value}%</span>
+                        <h4 className="font-bold text-lg text-gray-700 dark:text-gray-200 mb-4">ترکیب فاکتورها</h4>
+                        <div className="space-y-4 text-right">
+                            {strategy.factors.map((factor) => (
+                            <div key={factor.name} className="w-full">
+                                <div className="flex justify-between mb-1 text-sm font-semibold text-gray-600 dark:text-gray-300">
+                                <span>{factor.name}</span>
+                                <span>{factor.value}%</span>
+                                </div>
+                                <Progress
+                                value={factor.value}
+                                className="h-2.5 bg-gray-200 dark:bg-gray-700"
+                                indicatorClassName="bg-[var(--strategy-color)]"
+                                />
                             </div>
-                            <Progress
-                            value={factor.value}
-                            className="h-2.5 bg-gray-200 dark:bg-gray-700"
-                            indicatorClassName="bg-[var(--strategy-color)]"
-                            />
+                            ))}
                         </div>
-                        ))}
-                    </div>
                     </motion.div>
-    
-                    <motion.p variants={itemVariants} className="mt-8 text-sm font-semibold text-center text-white p-3 rounded-lg" style={{backgroundColor: strategy.color}}>
-                    {strategy.final_cta}
-                    </motion.p>
-                </motion.div>
+                    
+                    <motion.div
+                      key={isSelected ? 'button' : 'cta'}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{duration: 0.2}}
+                      className="mt-8"
+                    >
+                      {isSelected ? (
+                        <Button
+                          onClick={onSubmit}
+                          size="lg"
+                          className="w-full text-lg font-bold py-6 rounded-lg shadow-lg bg-accent hover:bg-accent/90 text-accent-foreground"
+                        >
+                          ساخت سبد شخصی من
+                        </Button>
+                      ) : (
+                        <p className="text-sm font-semibold text-center text-white p-3 rounded-lg" style={{backgroundColor: strategy.color}}>
+                          {strategy.final_cta}
+                        </p>
+                      )}
+                    </motion.div>
+                </>
             )}
+            </motion.div>
           </AnimatePresence>
         </CardContent>
       </Card>

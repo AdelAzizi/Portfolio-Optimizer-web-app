@@ -4,9 +4,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { StrategyCard } from "@/components/strategy-card";
-import { Button } from "@/components/ui/button";
 import { StrategyInfo } from "@/types";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export default function HomePage() {
@@ -14,7 +13,6 @@ export default function HomePage() {
   const [selectedStrategy, setSelectedStrategy] = useState<string | null>(null);
   const [hoveredStrategy, setHoveredStrategy] = useState<string | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const buttonRef = useRef<HTMLDivElement | null>(null);
 
   const strategies: StrategyInfo[] = [
     {
@@ -29,7 +27,7 @@ export default function HomePage() {
         { name: "مومنتوم (Momentum)", value: 20 },
         { name: "ریسک‌کم (Low Volatility)", value: 90 },
       ],
-      final_cta: "اگر حفظ سرمایه و رشد پایدار اولویت شماست، این استراتژی برای شما ساخته شده است.",
+      final_cta: "مناسب برای حفظ سرمایه و رشد پایدار.",
       color: "hsl(120, 50%, 45%)",
     },
     {
@@ -44,7 +42,7 @@ export default function HomePage() {
         { name: "مومنتوم (Momentum)", value: 50 },
         { name: "ریسک‌کم (Low Volatility)", value: 50 },
       ],
-      final_cta: "اگر به دنبال بهترین بازده تعدیل‌شده بر اساس ریسک و یک رشد هوشمندانه هستید، این مسیر شماست.",
+      final_cta: "بهترین بازده تعدیل‌شده بر اساس ریسک.",
       color: "hsl(210, 50%, 55%)",
     },
     {
@@ -59,22 +57,14 @@ export default function HomePage() {
         { name: "مومنتوم (Momentum)", value: 90 },
         { name: "ریسک‌کم (Low Volatility)", value: 10 },
       ],
-      final_cta: "اگر تحمل ریسک بالایی دارید و هدف شما کسب حداکثر بازده ممکن است، با این استراتژی اوج بگیرید.",
+      final_cta: "برای آنان که تحمل ریسک بالا و هدف حداکثر بازدهی را دارند.",
       color: "hsl(350, 65%, 55%)",
     },
   ];
 
   const handleSelectStrategy = (id: string) => {
-    setSelectedStrategy(id);
+    setSelectedStrategy(id === selectedStrategy ? null : id);
   };
-
-  useEffect(() => {
-    if (selectedStrategy && buttonRef.current) {
-      setTimeout(() => {
-        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 300); // Wait for button animation
-    }
-  }, [selectedStrategy]);
 
   const handleMouseEnter = (id: string, index: number) => {
     setHoveredStrategy(id);
@@ -85,11 +75,12 @@ export default function HomePage() {
             if (rect.bottom > window.innerHeight - 20) {
                  window.scrollBy({ top: rect.bottom - window.innerHeight + 20, behavior: 'smooth' });
             }
-        }, 300); // Wait for animation to start
+        }, 300); 
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation(); // prevent card's onClick from firing
     if (selectedStrategy) {
       router.push(`/results?strategy=${selectedStrategy}`);
     }
@@ -111,7 +102,7 @@ export default function HomePage() {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-6xl">
         {strategies.map((strategy, index) => (
           <div
             key={strategy.id}
@@ -128,31 +119,11 @@ export default function HomePage() {
               isSelected={selectedStrategy === strategy.id}
               onSelect={handleSelectStrategy}
               isHovered={hoveredStrategy === strategy.id}
+              onSubmit={handleSubmit}
             />
           </div>
         ))}
       </div>
-      
-      <AnimatePresence>
-        {selectedStrategy && (
-          <motion.div
-            ref={buttonRef}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3 }}
-            className="mt-10"
-          >
-            <Button
-              onClick={handleSubmit}
-              size="lg"
-              className="text-lg font-bold px-12 py-6 rounded-full shadow-lg bg-accent hover:bg-accent/90 text-accent-foreground"
-            >
-              ساخت سبد شخصی من
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
