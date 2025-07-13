@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { StrategyCard } from "@/components/strategy-card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ export default function HomePage() {
   const router = useRouter();
   const [selectedStrategy, setSelectedStrategy] = useState<string | null>(null);
   const [hoveredStrategy, setHoveredStrategy] = useState<string | null>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const strategies: StrategyInfo[] = [
     {
@@ -66,6 +67,19 @@ export default function HomePage() {
     setSelectedStrategy(id);
   };
 
+  const handleMouseEnter = (id: string, index: number) => {
+    setHoveredStrategy(id);
+    const cardElement = cardRefs.current[index];
+    if (cardElement) {
+        setTimeout(() => {
+            const rect = cardElement.getBoundingClientRect();
+            if (rect.bottom > window.innerHeight - 20) {
+                 window.scrollBy({ top: rect.bottom - window.innerHeight + 20, behavior: 'smooth' });
+            }
+        }, 300); // Wait for animation to start
+    }
+  };
+
   const handleSubmit = () => {
     if (selectedStrategy) {
       router.push(`/results?strategy=${selectedStrategy}`);
@@ -73,30 +87,31 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-8 text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 sm:p-8 text-center">
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-10"
+        className="mb-12"
       >
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-800 dark:text-white mb-3">
+        <h1 className="text-4xl sm:text-5xl font-headline font-bold text-primary mb-4">
           سبد سرمایه‌گذاری هوشمند خود را بسازید
         </h1>
-        <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+        <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
           یکی از استراتژی‌های زیر را انتخاب کنید تا ما یک سبد بهینه و شخصی‌سازی شده برای شما پیشنهاد دهیم.
         </p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
-        {strategies.map((strategy) => (
+        {strategies.map((strategy, index) => (
           <div
             key={strategy.id}
-            onMouseEnter={() => setHoveredStrategy(strategy.id)}
+            ref={el => cardRefs.current[index] = el}
+            onMouseEnter={() => handleMouseEnter(strategy.id, index)}
             onMouseLeave={() => setHoveredStrategy(null)}
             className={cn(
               "transition-all duration-300",
-              hoveredStrategy && hoveredStrategy !== strategy.id ? "blur-sm scale-95" : ""
+              hoveredStrategy && hoveredStrategy !== strategy.id ? "blur-sm scale-95 opacity-70" : ""
             )}
           >
             <StrategyCard
@@ -121,7 +136,7 @@ export default function HomePage() {
             <Button
               onClick={handleSubmit}
               size="lg"
-              className="text-lg font-bold px-12 py-6 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 text-white"
+              className="text-lg font-bold px-12 py-6 rounded-full shadow-lg bg-accent hover:bg-accent/90 text-accent-foreground"
             >
               ساخت سبد شخصی من
             </Button>
