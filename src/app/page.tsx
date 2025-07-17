@@ -7,6 +7,14 @@ import { StrategyCard } from "@/components/strategy-card";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { StrategyInfo } from "@/types";
+import { Button } from "@/components/ui/button";
+
+const strategyColors: Record<string, string> = {
+  defensive: "hsl(var(--chart-3))",
+  balanced: "hsl(var(--chart-1))",
+  aggressive: "hsl(var(--chart-5))",
+};
+
 
 export default function HomePage() {
   const router = useRouter();
@@ -17,48 +25,48 @@ export default function HomePage() {
   const strategies: StrategyInfo[] = [
     {
       id: "defensive",
-      icon: "🐢",
-      name: "لاک‌پشت دانا",
-      title: "استراتژی دفاعی",
-      tagline: "رشد پیوسته، حتی در بازارهای طوفانی.",
-      story: "همانند لاک‌پشت که با لاک محکم خود از خود محافظت می‌کند، این استراتژی بر حفظ سرمایه شما در شرایط سخت تمرکز دارد. با انتخاب سهام باکیفیت و کم‌نوسان، مسیری آرام و مطمئن را برای رشد بلندمدت سرمایه شما فراهم می‌کند.",
+      icon: "https://placehold.co/100x100.png",
+      name: { fa: "لاک‌پشت دانا", en: "Wise Turtle" },
+      tagline: { fa: "رشد پیوسته، حتی در بازارهای طوفانی.", en: "Steady growth, even in stormy markets." },
+      story: { fa: "همانند لاک‌پشت که با لاک محکم خود از خود محافظت می‌کند، این استراتژی بر حفظ سرمایه شما در شرایط سخت تمرکز دارد. با انتخاب سهام باکیفیت و کم‌نوسان، مسیری آرام و مطمئن را برای رشد بلندمدد سرمایه شما فراهم می‌کند.", en: "Like a turtle protecting itself with its strong shell, this strategy focuses on preserving your capital in tough conditions. By selecting high-quality, low-volatility stocks, it provides a calm and secure path for the long-term growth of your capital." },
       factors: [
-        { name: "ارزش (Value)", value: 70 },
-        { name: "مومنتوم (Momentum)", value: 20 },
-        { name: "ریسک‌کم (Low Volatility)", value: 90 },
+        { name: { fa: "ارزش (Value)", en: "Value" }, value: 70 },
+        { name: { fa: "مومنتوم (Momentum)", en: "Momentum" }, value: 20 },
+        { name: { fa: "ریسک‌کم (Low Volatility)", en: "Low Volatility" }, value: 90 },
       ],
-      final_cta: "مناسب برای حفظ سرمایه و رشد پایدار.",
-      color: "hsl(120, 50%, 45%)",
+      final_cta: { fa: "مناسب برای حفظ سرمایه.", en: "For capital preservation." },
+      color: strategyColors.defensive,
+      optimal_weights: {}, performance_summary: { "Total Return": "", "Annualized Volatility": "", "Annualized Return": "", "Sharpe Ratio": "" }, backtest_data: { dates: [], strategy_values: [] }, transaction_analysis: { annual_turnover: "", estimated_total_cost: "", rebalance_history: [] }
     },
     {
       id: "balanced",
-      icon: "🐺",
-      name: "گرگ باتجربه",
-      title: "استراتژی متعادل",
-      tagline: "شکار هوشمندانه فرصت‌ها، با نگاهی به افق.",
-      story: "گرگ‌ها به صورت گروهی و با استراتژی شکار می‌کنند. این سبد نیز با ترکیبی هوشمندانه از سهام ارزشمند و سهامی که در روند رشد قرار دارند، به دنبال شکار بهترین فرصت‌های بازار است تا بازدهی قابل توجهی را با ریسکی مدیریت‌شده به دست آورد.",
+      icon: "https://placehold.co/100x100.png",
+      name: { fa: "گرگ باتجربه", en: "Experienced Wolf" },
+      tagline: { fa: "شکار هوشمندانه فرصت‌ها، با نگاهی به افق.", en: "Intelligent hunting of opportunities, with an eye on the horizon." },
+      story: { fa: "گرگ‌ها به صورت گروهی و با استراتژی شکار می‌کنند. این سبد نیز با ترکیبی هوشمندانه از سهام ارزشمند و سهامی که در روند رشد قرار دارند، به دنبال شکار بهترین فرصت‌های بازار است تا بازدهی قابل توجهی را با ریسکی مدیریت‌شده به دست آورد.", en: "Wolves hunt in packs and with strategy. This portfolio, too, seeks to hunt the best market opportunities with a clever combination of value stocks and stocks in an upward trend, aiming for significant returns with managed risk." },
       factors: [
-        { name: "ارزش (Value)", value: 50 },
-        { name: "مومنتوم (Momentum)", value: 50 },
-        { name: "ریسک‌کم (Low Volatility)", value: 50 },
+        { name: { fa: "ارزش (Value)", en: "Value" }, value: 50 },
+        { name: { fa: "مومنتوم (Momentum)", en: "Momentum" }, value: 50 },
+        { name: { fa: "ریسک‌کم (Low Volatility)", en: "Low Volatility" }, value: 50 },
       ],
-      final_cta: "بهترین بازده تعدیل‌شده بر اساس ریسک.",
-      color: "hsl(210, 50%, 55%)",
+      final_cta: { fa: "بهترین بازده تعدیل‌شده.", en: "Best risk-adjusted return." },
+      color: strategyColors.balanced,
+      optimal_weights: {}, performance_summary: { "Total Return": "", "Annualized Volatility": "", "Annualized Return": "", "Sharpe Ratio": "" }, backtest_data: { dates: [], strategy_values: [] }, transaction_analysis: { annual_turnover: "", estimated_total_cost: "", rebalance_history: [] }
     },
     {
       id: "aggressive",
-      icon: "🦅",
-      name: "شاهین تیزبین",
-      title: "استراتژی تهاجمی",
-      tagline: "اوج‌گیری سریع، برای کسانی که آسمان را می‌خواهند.",
-      story: "شاهین با دید تیز خود، از ارتفاع بالا شکارش را شناسایی و با سرعتی بی‌نظیر به آن حمله می‌کند. این استراتژی تهاجمی نیز با تمرکز بر قوی‌ترین روندهای بازار، به دنبال کسب حداکثر بازده در کوتاه‌ترین زمان ممکن است.",
+      icon: "https://placehold.co/100x100.png",
+      name: { fa: "شاهین تیزبین", en: "Sharp Eagle" },
+      tagline: { fa: "اوج‌گیری سریع، برای کسانی که آسمان را می‌خواهند.", en: "Rapid ascent, for those who want the sky." },
+      story: { fa: "شاهین با دید تیز خود، از ارتفاع بالا شکارش را شناسایی و با سرعتی بی‌نظیر به آن حمله می‌کند. این استراتژی تهاجمی نیز با تمرکز بر قوی‌ترین روندهای بازار، به دنبال کسب حداکثر بازده در کوتاه‌ترین زمان ممکن است.", en: "With its sharp vision, the eagle spots its prey from high altitudes and attacks it with unmatched speed. This aggressive strategy also focuses on the strongest market trends, aiming for maximum returns in the shortest possible time." },
       factors: [
-        { name: "ارزش (Value)", value: 20 },
-        { name: "مومنتوم (Momentum)", value: 90 },
-        { name: "ریسک‌کم (Low Volatility)", value: 10 },
+        { name: { fa: "ارزش (Value)", en: "Value" }, value: 20 },
+        { name: { fa: "مومنتوم (Momentum)", en: "Momentum" }, value: 90 },
+        { name: { fa: "ریسک‌کم (Low Volatility)", en: "Low Volatility" }, value: 10 },
       ],
-      final_cta: "برای آنان که تحمل ریسک بالا و هدف حداکثر بازدهی را دارند.",
-      color: "hsl(350, 65%, 55%)",
+      final_cta: { fa: "برای هدف حداکثر بازدهی.", en: "Aiming for maximum returns." },
+      color: strategyColors.aggressive,
+      optimal_weights: {}, performance_summary: { "Total Return": "", "Annualized Volatility": "", "Annualized Return": "", "Sharpe Ratio": "" }, backtest_data: { dates: [], strategy_values: [] }, transaction_analysis: { annual_turnover: "", estimated_total_cost: "", rebalance_history: [] }
     },
   ];
 
@@ -81,12 +89,17 @@ export default function HomePage() {
     if (cardElement && !selectedStrategy) {
         setTimeout(() => {
             const rect = cardElement.getBoundingClientRect();
-            if (rect.bottom > window.innerHeight - 20) {
+            const isFullyVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+            if (!isFullyVisible) {
                  window.scrollBy({ top: rect.bottom - window.innerHeight + 20, behavior: 'smooth' });
             }
         }, 300); 
     }
   };
+
+   const handleMouseLeave = () => {
+    setHoveredStrategy(null);
+   };
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation(); 
@@ -130,7 +143,7 @@ export default function HomePage() {
               key={strategy.id}
               ref={el => cardRefs.current[index] = el}
               onMouseEnter={() => handleMouseEnter(strategy.id, index)}
-              onMouseLeave={() => setHoveredStrategy(null)}
+              onMouseLeave={handleMouseLeave}
               className={cn(
                 "transition-all duration-300 h-full",
                 isBlurred ? "blur-sm scale-95 opacity-70" : ""
@@ -143,6 +156,7 @@ export default function HomePage() {
                 isHovered={isHovered}
                 onSubmit={handleSubmit}
                 isAnyCardSelected={isAnyCardSelected}
+                currentLanguage="fa"
               />
             </div>
           );
